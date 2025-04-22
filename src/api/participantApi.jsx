@@ -24,9 +24,7 @@ export const addParticipant = async (participant) => {
 
 export const updateParticipant = async (id, updatedParticipant) => {
 	try {
-		console.log('old:', updatedParticipant);
 		const response = await axios.put(`${API_URL}/${id}`, updatedParticipant);
-		console.log('Updated participant:', response.data);
 		return response.data;
 	} catch (error) {
 		console.error('Error updating participant:', error);

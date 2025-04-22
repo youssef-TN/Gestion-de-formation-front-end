@@ -2,9 +2,8 @@ import UserDashboard from "./UserDashboard";
 import Trainings from "./Trainings";
 import Trainers from "./Trainers";
 import Participants from "./Participants";
-
+import { fetchRecentActivities } from "../api/dashboardApi"; 
 import { useState, useEffect } from "react";
-import { redirect } from "react-router-dom";
 
 // Theme colors with proper naming for better organization
 const THEME = {
@@ -144,7 +143,7 @@ const NavButton = ({ isActive, onClick, icon, children, description }) => {
       className={`w-full flex items-center px-4 py-3 rounded-lg text-left transition-all duration-300 ${
         isActive
           ? "bg-white text-gray-800 shadow-sm font-medium"
-          : "text-white text-opacity-90 hover:bg-white hover:bg-opacity-20 hover:text-white"
+          : "text-white text-opacity-90 hover:bg-black hover:bg-opacity-20 hover:text-white hover:cursor-pointer"
       }`}
       onClick={onClick}
       aria-current={isActive ? "page" : undefined}
@@ -159,11 +158,9 @@ const NavButton = ({ isActive, onClick, icon, children, description }) => {
 };
 
 // Main component
-export default ({user})=> {
+export default ({ currentUser }) => {
   // Store active section in state - default to the first nav item
   const [activeSection, setActiveSection] = useState(NAV_ITEMS[0].id);
-  // Keep track of unread notifications for notification badge
-  const [unreadNotifications, setUnreadNotifications] = useState(3);
 
   // Mock effect to demonstrate loading user data - can be replaced with real data fetching
   useEffect(() => {
@@ -176,10 +173,6 @@ export default ({user})=> {
   // Handle navigation changes
   const handleNavigation = (sectionId) => {
     setActiveSection(sectionId);
-    // If clicking on notifications, clear unread count
-    if (sectionId === "notifications") {
-      setUnreadNotifications(0);
-    }
   };
 
   // Handle logout action
@@ -192,7 +185,7 @@ export default ({user})=> {
   const renderContent = () => {
     switch (activeSection) {
       case NAV_ITEMS[0].id:
-        return <UserDashboard />;
+        return <UserDashboard currentUser={currentUser} />;
       case NAV_ITEMS[1].id:
         return <Trainings />;
       case NAV_ITEMS[2].id:
@@ -219,26 +212,6 @@ export default ({user})=> {
         {/* Decorative top accent */}
         <div className="absolute top-0 left-0 right-0 h-1 bg-white opacity-20"></div>
 
-        {/* App Logo & Title */}
-        <div className="px-6 py-5 flex items-center justify-center">
-          <svg
-            className="w-8 h-8 mr-2"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke={THEME.white}
-            strokeWidth="2"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-            />
-          </svg>
-          <h1 className="text-xl font-bold text-white tracking-wide">
-            Training Portal
-          </h1>
-        </div>
-
         {/* User Profile with Avatar */}
         <div className="flex items-center p-6 mt-2 border-b border-white border-opacity-10">
           <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center mr-4 shadow-inner overflow-hidden">
@@ -259,9 +232,10 @@ export default ({user})=> {
           </div>
           <div>
             <h3 className="text-lg font-semibold text-white text-opacity-90 tracking-wide">
-              Jane Doe
+              {currentUser.login.charAt(0).toUpperCase() +
+                currentUser.login.slice(1)}
             </h3>
-            <p className="text-sm text-white text-opacity-70">{Administrator}</p>
+            <p className="text-sm text-white text-opacity-70">User</p>
           </div>
         </div>
 
@@ -398,4 +372,4 @@ export default ({user})=> {
       </main>
     </div>
   );
-}
+};

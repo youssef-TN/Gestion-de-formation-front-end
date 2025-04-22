@@ -11,39 +11,14 @@ export default ({
     // Convert value to number for internal calculations
     const numValue = typeof value === 'number' ? value : parseInt(value) || 0;
     
-    const handleInputChange = (e) => {
-      const val = e.target.value;
-      
-      // Allow empty value for intermediate states
-      if (val === '') {
-        onChange('');
-        return;
-      }
-      
-      // Allow only numeric input
-      const parsed = parseInt(val, 10);
-      if (!isNaN(parsed)) {
-        onChange(parsed);
-      }
-    };
-    
-    const handleBlur = () => {
-      // On blur, enforce min/max constraints
-      if (value === '' || numValue < min) {
-        onChange(min);
-      } else if (numValue > max) {
-        onChange(max);
-      }
-    };
-    
     const increment = () => {
       const newValue = Math.min(max, numValue + 1);
-      onChange(newValue);
+      onChange({ target: { name, value: newValue } });
     };
     
     const decrement = () => {
       const newValue = Math.max(min, numValue - 1);
-      onChange(newValue);
+      onChange({ target: { name, value: newValue } });
     };
     
     return (
@@ -67,8 +42,7 @@ export default ({
             pattern="[0-9]*"
             name={name}
             value={value}
-            onChange={handleInputChange}
-            onBlur={handleBlur}
+            onChange={onChange}
             required={required}
             className="w-32 h-12 px-4 py-2 border border-gray-200 rounded-md text-center focus:outline-none focus:ring-1 focus:ring-blue-500"
           />

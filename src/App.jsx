@@ -2,7 +2,7 @@ import { useState, useEffect, createContext, useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import User from './user';
 import Manager from './Manager';
-import Admin from './Admin';
+import Admin from './admin';
 import Login from './components/login';
 import Loading from './components/Loading'; 
 

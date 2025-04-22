@@ -25,6 +25,7 @@ export const addTraining = async (trainingData) => {
 
 export const updateTraining = async (id, updatedData) => {
 	try {
+		console.log('old:', updatedData);
 		const response = await axios.put(`${API_URL}/${id}`, updatedData);
 		return response.data;
 	} catch (error) {

@@ -1,18 +1,32 @@
 import React from 'react';
 import { Bell, User, Circle, Activity } from 'lucide-react';
+import {fetchRecentActivities} from "../api/dashboardApi"; 
+import RecentActivities from "../components/RecentActivities"; // Assuming you have a RecentActivities component
 
 const Dashboard = ({currentUser}) => {
   // État et données pour les activités
   const [loading, setLoading] = React.useState(false);
-  const [activities, setActivities] = React.useState([
-    { id: 1, type: 'message', title: 'New message from Jane', time: '5 min ago' },
-    { id: 2, type: 'file', title: 'Project files uploaded', time: '2 hours ago' },
-    { id: 3, type: 'update', title: 'System update completed', time: 'Yesterday' }
-  ]);
+  const [recentActivities, setRecentActivities] = React.useState([]);
+  
+  React.useEffect(() => {
+    loadActivities();
+    }, []);
+
+  const loadActivities = async () => {
+		try {
+		  setLoading(true);
+		  const data = await fetchRecentActivities(true);
+      console.log('Fetched recent activities:', data); // Log the fetched data
+		  setRecentActivities(data);
+		} catch (error) {
+		  console.error("Failed to fetch recent activities:", error);
+		} finally {
+		  setLoading(false);
+		}
+	  };
   
   // Mapping des icônes pour les types d'activités
   const iconMap = {
-    message: <Bell className="text-white w-4 h-4" />,
     file: <User className="text-white w-4 h-4" />,
     update: <Activity className="text-white w-4 h-4" />
   };
@@ -45,11 +59,11 @@ const Dashboard = ({currentUser}) => {
                 </div>
               </div>
             </div>
-            
-            <div className="bg-[#BFD8AF] p-4 rounded-3xl shadow-inner">
+            <RecentActivities recentActivities={recentActivities} loading={loading} iconMap={iconMap} formatTimeAgo={formatTimeAgo} />
+            {/* <div className="bg-[#BFD8AF] p-4 rounded-3xl shadow-inner">
               <div className="flex space-x-6 mb-4 px-2">
-                <span className="font-semibold text-lg text-white border-b-2 border-white pb-1">Today</span>
-                <span className="font-light text-gray-200 pb-1">All</span>
+                <span className="font-semibold text-lg text-white border-b-2 border-white pb-1">Users</span>
+                <span className="font-light text-gray-200 pb-1">Participants</span>
               </div>
               
               <div className="space-y-4 max-h-[500px] overflow-y-auto pr-1">
@@ -58,35 +72,68 @@ const Dashboard = ({currentUser}) => {
                     <p>Loading...</p>
                   </div>
                 ) : (
-                  activities.map((activity) => (
+                  recentActivities?.users?.map((activity) => (
                     <div
                       key={activity.id}
                       className="bg-white px-4 py-3 rounded-xl flex items-center shadow-sm hover:shadow-md transition duration-150"
                     >
                       <div className="w-10 h-10 bg-[#99BC85] rounded-full flex items-center justify-center mr-4">
-                        {iconMap[activity.type] || <Activity className="text-white w-5 h-5" />}
+                        {iconMap["update"] || <Activity className="text-white w-5 h-5" />}
                       </div>
                       <div className="flex-1">
                         <p className="text-sm text-gray-700">
-                          {activity.title}
+                          New User <span className="text-sm text-[#99BC85] font-bold ">{activity.login}</span> has been updated
                         </p>
                         <p className="text-xs text-gray-500">
-                          {activity.time}
+                          {formatTimeAgo(activity.updatedAt)}
                         </p>
                       </div>
                     </div>
                   ))
                 )}
-                {!loading && activities.length === 0 && (
+                {!loading && recentActivities?.users?.length === 0 && (
                   <p className="text-gray-500 text-center py-4">No recent activities</p>
                 )}
               </div>
-            </div>
-          </div>
+            </div>*/}
+          </div> 
         </div>
       </div>
     </div>
   );
 };
+
+function formatTimeAgo(dateString) {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffInSeconds = Math.floor((now - date) / 1000);
+  
+  if (diffInSeconds < 60) {
+    return `${diffInSeconds} seconds ago`;
+  }
+  
+  const diffInMinutes = Math.floor(diffInSeconds / 60);
+  if (diffInMinutes < 60) {
+    return `${diffInMinutes} ${diffInMinutes === 1 ? 'minute' : 'minutes'} ago`;
+  }
+  
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  if (diffInHours < 24) {
+    return `${diffInHours} ${diffInHours === 1 ? 'hour' : 'hours'} ago`;
+  }
+  
+  const diffInDays = Math.floor(diffInHours / 24);
+  if (diffInDays < 30) {
+    return `${diffInDays} ${diffInDays === 1 ? 'day' : 'days'} ago`;
+  }
+  
+  const diffInMonths = Math.floor(diffInDays / 30);
+  if (diffInMonths < 12) {
+    return `${diffInMonths} ${diffInMonths === 1 ? 'month' : 'months'} ago`;
+  }
+  
+  const diffInYears = Math.floor(diffInMonths / 12);
+  return `${diffInYears} ${diffInYears === 1 ? 'year' : 'years'} ago`;
+}
 
 export default Dashboard;

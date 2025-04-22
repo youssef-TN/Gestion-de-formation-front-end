@@ -19,7 +19,7 @@ export default () => {
     lastName: '',
     email: '',
     tel: '',
-    style: '',
+    type: '',
   });
   
   const [searchQuery, setSearchQuery] = useState('');
@@ -33,7 +33,7 @@ export default () => {
     lastName: '',
     email: '',
     tel: '',
-    style: 'interne',
+    type: 'intern',
   });
 
   useEffect(() => {
@@ -68,7 +68,7 @@ export default () => {
       lastName: '',
       email: '',
       tel: '',
-      style: '',
+      type: '',
     });
     setSearchQuery('');
   };
@@ -80,7 +80,7 @@ export default () => {
       lastName: '',
       email: '',
       tel: '',
-      style: 'interne',
+      type: 'intern',
     });
     setModalOpen(true);
   };
@@ -92,7 +92,7 @@ export default () => {
       lastName: trainer.lastName,
       email: trainer.email,
       tel: trainer.tel,
-      style: trainer.style || 'interne',
+      type: trainer.type || 'intern',
     });
     setModalOpen(true);
   };
@@ -144,7 +144,7 @@ export default () => {
       const matchesLastName = !filters.lastName || trainer.lastName.toLowerCase().includes(filters.lastName.toLowerCase());
       const matchesEmail = !filters.email || trainer.email.toLowerCase().includes(filters.email.toLowerCase());
       const matchesTel = !filters.tel || trainer.tel.includes(filters.tel);
-      const matchesStyle = !filters.style || trainer.style === filters.style;
+      const matchesType = !filters.type || trainer.type === filters.type;
       
       // Search query
       const matchesSearch = !searchQuery || 
@@ -152,9 +152,9 @@ export default () => {
         trainer.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         trainer.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
         trainer.tel.includes(searchQuery.toLowerCase()) ||
-        (trainer.style && trainer.style.toLowerCase().includes(searchQuery.toLowerCase()));
+        (trainer.type && trainer.type.toLowerCase().includes(searchQuery.toLowerCase()));
       
-      return matchesFirstName && matchesLastName && matchesEmail && matchesTel && matchesStyle && matchesSearch;
+      return matchesFirstName && matchesLastName && matchesEmail && matchesTel && matchesType && matchesSearch;
     });
     
     // Then sort the filtered trainers
@@ -238,9 +238,9 @@ export default () => {
                 Last Name: {filters.lastName}
               </span>
             )}
-            {filters.style && (
+            {filters.type && (
               <span className="inline-flex items-center px-3 py-1 bg-[#BFD8AF] text-gray-700 rounded-full text-sm">
-                Style: {filters.style}
+                Type: {filters.type}
               </span>
             )}
           </div>
@@ -256,7 +256,7 @@ export default () => {
                 { key: 'lastName', label: 'Last Name' },
                 { key: 'email', label: 'Email' },
                 { key: 'tel', label: 'Phone' },
-                { key: 'style', label: 'Style' },
+                { key: 'type', label: 'Type' },
                 { key: 'actions', label: 'Actions' }
               ].map((col) => (
                 <th 
@@ -287,7 +287,7 @@ export default () => {
                   <td className="px-6 py-4">{trainer.lastName}</td>
                   <td className="px-6 py-4">{trainer.email}</td>
                   <td className="px-6 py-4">{trainer.tel}</td>
-                  <td className="px-6 py-4">{trainer.style}</td>
+                  <td className="px-6 py-4">{trainer.type}</td>
                   <td className="px-6 py-4 flex justify-center gap-4">
                     <button
                       onClick={() => handleEdit(trainer)}
@@ -373,13 +373,13 @@ export default () => {
           />
           
           <FormRadio
-            label="Style"
-            name="style"
+            label="Type"
+            name="type"
             options={[
-              { value: 'interne', label: 'Interne' },
-              { value: 'externe', label: 'Externe' }
+              { value: 'intern', label: 'Intern' },
+              { value: 'extern', label: 'Extern' }
             ]}
-            value={formData.style}
+            value={formData.type}
             onChange={handleInputChange}
             required={true}
           />
@@ -466,14 +466,14 @@ export default () => {
           </div>
           
           <FormRadio
-            label="Style"
-            name="style"
+            label="Type"
+            name="type"
             options={[
               { value: '', label: 'All' },
-              { value: 'interne', label: 'Interne' },
-              { value: 'externe', label: 'Externe' }
+              { value: 'intern', label: 'Intern' },
+              { value: 'extern', label: 'Extern' }
             ]}
-            value={filters.style}
+            value={filters.type}
             onChange={handleFilterChange}
             required={true}
           />
